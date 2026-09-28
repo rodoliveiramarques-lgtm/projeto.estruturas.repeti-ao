@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    double limite_temperatura;
+    double temperatura_atual;
+    int consecutivas_altas = 0;
+    int leitura_valida;
+
+    printf("=== SISTEMA DE MONITORAMENTO DE TEMPERATURA ===\n");
+    
+    do {
+        printf("Defina o limite maximo de seguranca (em Celsius): ");
+        if (scanf("%lf", &limite_temperatura) != 1 || limite_temperatura < -273.15) {
+            printf("Erro: Limite invalido. Digite um valor real acima do zero absoluto (-273.15 C).\n\n");
+            while (getchar() != '\n'); // Limpa o buffer de entrada
+            leitura_valida = 0;
+        } else {
+            leitura_valida = 1;
+        }
+    } while (!leitura_valida);
+
+    printf("\nMonitoramento iniciado. O sistema sera encerrado apos 3 leituras consecutivas acima de %.2f C.\n", limite_temperatura);
+    printf("\n");
+
+    do {
+        printf("\nDigite a leitura atual do sensor: ");
+        while (scanf("%lf", &temperatura_atual) != 1 || temperatura_atual < -273.15) {
+            printf("Erro: Valor invalido inserido! Digite uma temperatura valida: ");
+            while (getchar() != '\n'); // Limpa o buffer de entrada
+        }
+        if (temperatura_atual > limite_temperatura) {
+            consecutivas_altas++;
+            printf("[ALERTA] Temperatura de %.2f C esta ACIMA do limite de %.2f C!\n", temperatura_atual, limite_temperatura);
+            printf("[INFO] Sequencia atual de leituras altas: %d/3\n", consecutivas_altas);
+        } else {
+            // Reinicia o contador se a temperatura voltar a um nível seguro
+            if (consecutivas_altas > 0) {
+                printf("[INFO] Temperatura normalizada (%.2f C). Contador de seguranca resetado.\n", temperatura_atual);
+            }
+            consecutivas_altas = 0;
+        }
+
+    } while (consecutivas_altas < 3);  
+    printf("\n=\n");
+    printf("ALERTA CRITICO: 3 leituras consecutivas acima do limite. Encerrando monitoramento!\n");
+    printf("=\n");
+
+    return 0;
+}
